@@ -1,5 +1,5 @@
 # Práctica final Ansible
-A continuación se explica un poco el desarrollo de la práctica final de Ansible
+A continuación se explica un poco el desarrollo de la práctica final de Ansible.
 ## Parte I
 1. Creo el archivo ```inventory```, en el cual se definen los hosts gestionados por ansible.
 2. Creo el archivo ```asnsible.cfg``` en el mismo directorio donde voy a ejecutar los playbooks. En este archivo, indicaré a Ansible que inventario utilizar por defecto.
