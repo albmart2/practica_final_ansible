@@ -31,6 +31,7 @@ A continuación se explica un poco el desarrollo de la práctica final de Ansibl
 2. Creo el playbook ```get_web_content.yml```.
 3. Creo el playbook ```site.yml```, el cual importará los otros dos playbooks.
 4. Ejecuto el playbook ```site.yml```.
+	
 	```bash
 	ansible-playbook site.yml
 	```
