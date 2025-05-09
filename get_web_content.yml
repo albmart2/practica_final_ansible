@@ -1,0 +1,39 @@
+---
+- name: Test web content
+  hosts: localhost # Se ejecuta en el nodo de control
+  connection: local
+  become: no # Generalmente no se necesita 'become' para consultar una URL localmente
+
+  tasks:
+    - name: "1. Retrieve web content and write to error log on failure."
+      block:
+        - name: "2. Retrieve web content from vagrant1"
+          ansible.builtin.uri:
+            url: http://vagrant1 # Asegúrate que vagrant1 es accesible desde el nodo de control
+            method: GET
+            return_content: yes
+            status_code: 200 # Espera un 200 OK
+          register: content
+          failed_when: "'Bienvenido a vagrant1' not in content.content" # Opcional: validación más específica del contenido
+
+        - name: Mostrar contenido recuperado (si éxito)
+          ansible.builtin.debug:
+            msg: "Contenido de http://vagrant1: {{ content.content | truncate(100) }}"
+          when: content is defined and not content.failed
+
+      rescue:
+        - name: "3. Write failure details to error file"
+          ansible.builtin.copy:
+            content: |
+              FALLO AL RECUPERAR CONTENIDO DE http://vagrant1
+              Detalles del intento:
+              URL: {{ content.url | default('N/A') }}
+              Status: {{ content.status | default('N/A') }}
+              Respuesta: {{ content.content | default(content.msg) | default('No hubo respuesta o mensaje de error') }}
+            dest: ./error.log # Crea el fichero si no existe en el directorio actual
+          when: true # Siempre ejecuta esta tarea si se entra al bloque rescue
+
+        - name: Informar del fallo
+          ansible.builtin.fail:
+            msg: "Fallo al recuperar contenido de http://vagrant1. Revisa error.log."
+

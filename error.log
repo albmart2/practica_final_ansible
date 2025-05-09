@@ -1,0 +1,15 @@
+FALLO AL RECUPERAR CONTENIDO DE http://vagrant1
+Detalles del intento:
+URL: http://vagrant1
+Status: 200
+Respuesta: <!-- files/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bienvenido a centos9s</title>
+</head>
+<body>
+    <h1>Servicio web en centos9s desplegado por Ansible!</h1>
+</body>
+</html>
+

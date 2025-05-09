@@ -1,0 +1,8 @@
+# /etc/httpd/conf.d/vhost.conf for {{ ansible_facts['hostname'] }}
+<VirtualHost *:80>
+    ServerName {{ inventory_hostname }}
+    DocumentRoot /var/www/vhosts/{{ inventory_hostname }}
+    ErrorLog /var/log/httpd/{{ inventory_hostname }}-error.log
+    CustomLog /var/log/httpd/{{ inventory_hostname }}-access.log combined
+</VirtualHost>
+

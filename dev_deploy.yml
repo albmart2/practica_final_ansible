@@ -1,0 +1,67 @@
+---
+- name: Desplegar aplicación web
+  hosts: servidores
+  become: yes  # Habilitar escalada de privilegios para todo el play
+
+  handlers:
+    - name: Restart httpd
+      ansible.builtin.service:
+        name: httpd
+        state: restarted
+
+  tasks:
+    - name: 1. Instalar el paquete httpd
+      ansible.builtin.package: # O yum/apt específicamente
+        name: httpd
+        state: present
+
+    - name: 2. Iniciar el servicio httpd y habilitarlo
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: "3. Desplegar el template vhost.conf.j2 a /etc/httpd/conf.d/vhost.conf"
+      ansible.builtin.template:
+        src: templates/vhost.conf.j2 # Ruta relativa al playbook
+        dest: /etc/httpd/conf.d/vhost.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart httpd # Notifica al handler
+
+    - name: "4a. Crear directorio para vhost si no existe"
+      ansible.builtin.file:
+        path: "/var/www/vhosts/{{ inventory_hostname }}" # Cambiado
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+
+    - name: "4b. Desplegar el fichero template index.html al directorio del vhost"
+      ansible.builtin.template: # <--- USA TEMPLATE
+        src: templates/index.html # <--- RUTA FUENTE ACTUALIZADA A templates/
+        dest: "/var/www/vhosts/{{ inventory_hostname }}/index.html"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: "5. Configurar el firewall para permitir http y https"
+      ansible.posix.firewalld: # Asumiendo firewalld (común en RHEL/CentOS)
+        service: "{{ item }}"
+        permanent: yes
+        state: enabled
+        immediate: yes # Aplica los cambios inmediatamente
+      loop:
+        - http
+        - https
+      # Si usas ufw (Ubuntu), el módulo sería community.general.ufw
+      # - community.general.ufw:
+      # rule: allow
+      # port: "{{ item }}"
+      # proto: tcp
+      # loop:
+      # - '80' # http
+      # - '443' # https
+

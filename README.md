@@ -9,7 +9,7 @@ A continuación se explica un poco el desarrollo de la práctica final de Ansibl
 1. Si carlos no existe, el modo --check (o modo de comprobación) mostrará que la tarea para carlos realizaría un cambio (lo crearía).
 
     ```bash
-    ansible-playbook verify_users.yml --check
+    ansible-playbook verify_user.yml --check
     ```
 2. Para verificar la existencia sin crear, podrías usar el módulo command para ejecutar id <username> y comprobar el código de retorno, o usar el módulo ansible.builtin.getent si solo quieres verificar.
     ```bash
@@ -18,6 +18,19 @@ A continuación se explica un poco el desarrollo de la práctica final de Ansibl
     Después de esto, los usuarios carlos y marta deberían existir.
 3. Ahora, ejecuta verify_users.yml --check (asumiendo que usa state: present):
     ```bash
-    ansible-playbook verify_users.yml --check
+    ansible-playbook verify_user.yml --check
     ```
     Si los usuarios fueron creados correctamente por users.yml, este comando no debería reportar errores ni cambios para las tareas de los usuarios, porque state: present es idempotente (no hace nada si el estado deseado ya se cumple). Si sigue reportando cambios, asegúrate de que users.yml se ejecutó sin errores.
+## Parte II
+1. Creo el playbook ```dev_deploy.yml``` en el que se realiza lo siguiente:
+	- Instalar httpd
+	- Iniciar y habilitar httpd
+	- Desplegar template
+	- Copiar index.html
+	- Configurar firewall
+2. Creo el playbook ```get_web_content.yml```.
+3. Creo el playbook ```site.yml```, el cual importará los otros dos playbooks.
+4. Ejecuto el playbook ```site.yml```.
+	```bash
+	ansible-playbook site.yml
+	```

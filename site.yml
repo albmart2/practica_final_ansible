@@ -1,0 +1,8 @@
+---
+# site.yml
+- name: Importar playbook de despliegue de la aplicación
+  ansible.builtin.import_playbook: dev_deploy.yml
+
+- name: Importar playbook de prueba de contenido web
+  ansible.builtin.import_playbook: get_web_content.yml
+
