@@ -1,0 +1,33 @@
+---
+- name: Gestionar usuarios y paquetes base
+  hosts: servidores
+  become: yes  # Necesario para crear usuarios e instalar paquetes
+
+  vars:
+    # Definición de la variable para el paso 4
+    packages:
+      - memcached
+      - mariadb-server
+
+  tasks:
+    - name: Asegurar que los usuarios carlos y marta existen
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: present
+        shell: /bin/bash  # Opcional: define un shell para los usuarios
+        create_home: yes  # Opcional: crea el directorio home
+      loop:
+        - carlos
+        - marta
+      tags:
+        - users
+    - name: Instalar redis si el espacio de swap es mayor a 20MB
+      ansible.builtin.package: # O usa ansible.builtin.yum o ansible.builtin.apt según el S.O. de tus servidores
+        name: redis
+        state: present
+      when: ansible_facts['swapfree_mb'] is defined and ansible_facts['swapfree_mb'] > 20
+      tags:
+        - redis
+
+# --- Tareas adicionales de los pasos 4 y 5 se añadirán aquí ---
+
